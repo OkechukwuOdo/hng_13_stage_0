@@ -11,7 +11,7 @@ FROM openjdk:17-jdk-alpine
 WORKDIR /app
 
 # Copy the built JAR file into the container
-COPY target/*.jar app.jar
+COPY target/backend_hng_stage_0-0.0.1-SNAPSHOT.jar app.jar
 
 # Expose port 8080 for your Spring Boot app
 EXPOSE 8080
