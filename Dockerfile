@@ -1,19 +1,21 @@
-#FROM openjdk:17-jdk-alpine
-#WORKDIR /app
-#COPY target/ app.jar
-#EXPOSE 8080
-#CMD ["java", "-jar", "app.jar"]
-
-# Use OpenJDK 17 with Alpine for a lightweight image
-FROM openjdk:17-jdk-alpine
-
-# Set working directory
+# ---- Stage 1: Build the JAR ----
+FROM maven:3.9.6-eclipse-temurin-17 AS build
 WORKDIR /app
 
-# Copy the built JAR file into the container
-COPY target/backend_hng_stage_0-0.0.1-SNAPSHOT.jar app.jar
+# Copy project files
+COPY . .
 
-# Expose port 8080 for your Spring Boot app
+# Build the project (skip tests for speed)
+RUN mvn clean package -DskipTests
+
+# ---- Stage 2: Run the JAR ----
+FROM openjdk:17-jdk-alpine
+WORKDIR /app
+
+# Copy built JAR from the build stage
+COPY --from=build /app/target/*.jar app.jar
+
+# Expose port
 EXPOSE 8080
 
 # Run the application
